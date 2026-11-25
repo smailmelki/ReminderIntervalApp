@@ -1,0 +1,13 @@
+using ReminderIntervalApp.Services;
+namespace ReminderIntervalApp;
+public partial class MainPage:ContentPage {
+ readonly ReminderService service; int minutes=15; DateTime nextAt; IDispatcherTimer? timer;
+ readonly Dictionary<string,int> presets=new(){["5 دقائق"]=5,["10 دقائق"]=10,["15 دقيقة"]=15,["30 دقيقة"]=30,["45 دقيقة"]=45,["ساعة"]=60,["ساعتان"]=120};
+ public MainPage(ReminderService reminder){InitializeComponent();service=reminder;IntervalPicker.ItemsSource=presets.Keys.ToList();minutes=Preferences.Get("interval_minutes",15);IntervalPicker.SelectedIndex=presets.Values.ToList().IndexOf(minutes);SelectedLabel.Text=$"المدة الحالية: {minutes} دقيقة";if(Preferences.Get("reminder_active",false)){long ticks=Preferences.Get("next_alarm_ticks",0L);nextAt=ticks>0?new DateTime(ticks):DateTime.Now.AddMinutes(minutes);StatusLabel.Text="التذكير يعمل";StartButton.Text="✓ التذكير نشط";StartTicker();}}
+ void IntervalPicker_SelectedIndexChanged(object? s,EventArgs e){if(IntervalPicker.SelectedItem is string key&&presets.TryGetValue(key,out int m)){minutes=m;SetMinutes();}}
+ void SetMinutes(){SelectedLabel.Text=$"المدة الحالية: {minutes} دقيقة";Preferences.Set("interval_minutes",minutes);}
+ async void CustomButton_Clicked(object s,EventArgs e){if(!int.TryParse(CustomMinutes.Text,out int m)||m<1||m>1440){await DisplayAlert("مدة غير صحيحة","أدخل عدد الدقائق من 1 إلى 1440.","حسنًا");return;}minutes=m;IntervalPicker.SelectedIndex=-1;SetMinutes();}
+ async void StartButton_Clicked(object s,EventArgs e){if(!await service.EnsurePermissionsAsync()){await DisplayAlert("الصلاحيات","فعّل صلاحية الإشعارات والتنبيهات الدقيقة، ثم أعد المحاولة.","حسنًا");return;}nextAt=DateTime.Now.AddMinutes(minutes);Preferences.Set("reminder_active",true);Preferences.Set("interval_minutes",minutes);Preferences.Set("next_alarm_ticks",nextAt.Ticks);service.Schedule(minutes,nextAt);StatusLabel.Text="التذكير يعمل";StartButton.Text="✓ التذكير نشط";StartTicker();}
+ void StopButton_Clicked(object s,EventArgs e){service.Cancel();Preferences.Set("reminder_active",false);Preferences.Remove("next_alarm_ticks");timer?.Stop();CountdownLabel.Text="--:--";StatusLabel.Text="التذكير متوقف";StartButton.Text="▶ بدء التذكير";}
+ void StartTicker(){timer?.Stop();timer=Dispatcher.CreateTimer();timer.Interval=TimeSpan.FromSeconds(1);timer.Tick+=(_,_)=>{var left=nextAt-DateTime.Now;if(left<=TimeSpan.Zero){nextAt=DateTime.Now.AddMinutes(minutes);Preferences.Set("next_alarm_ticks",nextAt.Ticks);left=nextAt-DateTime.Now;}CountdownLabel.Text=$"{Math.Max(0,(int)left.TotalMinutes):00}:{left.Seconds:00}";};timer.Start();}
+}
