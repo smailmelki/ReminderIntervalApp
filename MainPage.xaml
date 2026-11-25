@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="ReminderIntervalApp.MainPage" Title="تذكيري" FlowDirection="RightToLeft" BackgroundColor="{StaticResource PageBackground}">
+ <ScrollView><VerticalStackLayout Padding="22" Spacing="18">
+  <Label Text="تذكير متكرر" FontSize="28" FontAttributes="Bold" TextColor="{StaticResource MainText}" HorizontalTextAlignment="Center"/>
+  <Label Text="حدد المدة التي تريد أن يتكرر فيها التنبيه" FontSize="14" TextColor="{StaticResource SecondaryText}" HorizontalTextAlignment="Center"/>
+  <Border BackgroundColor="{StaticResource CardBackground}" StrokeThickness="0" StrokeShape="RoundRectangle 22" Padding="20">
+   <VerticalStackLayout Spacing="12"><Label Text="مدة التذكير" FontAttributes="Bold" FontSize="17"/>
+    <Picker x:Name="IntervalPicker" Title="اختر المدة" SelectedIndexChanged="IntervalPicker_SelectedIndexChanged"/>
+    <Grid ColumnDefinitions="*,*" ColumnSpacing="10"><Entry x:Name="CustomMinutes" Placeholder="عدد الدقائق" Keyboard="Numeric" HorizontalTextAlignment="Center"/><Button Grid.Column="1" Text="مدة مخصصة" BackgroundColor="#E8EEFF" TextColor="#2563EB" Clicked="CustomButton_Clicked"/></Grid>
+    <Label x:Name="SelectedLabel" Text="المدة الحالية: 15 دقيقة" TextColor="{StaticResource SecondaryText}"/>
+   </VerticalStackLayout>
+  </Border>
+  <Border BackgroundColor="{StaticResource CardBackground}" StrokeThickness="0" StrokeShape="RoundRectangle 22" Padding="24">
+   <VerticalStackLayout Spacing="12"><Label Text="الوقت المتبقي" FontSize="16" HorizontalTextAlignment="Center" TextColor="{StaticResource SecondaryText}"/>
+    <Label x:Name="CountdownLabel" Text="--:--" FontSize="42" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="{StaticResource MainText}"/>
+    <Label x:Name="StatusLabel" Text="التذكير متوقف" HorizontalTextAlignment="Center" TextColor="{StaticResource SecondaryText}"/>
+   </VerticalStackLayout>
+  </Border>
+  <Button x:Name="StartButton" Text="▶ بدء التذكير" FontSize="18" FontAttributes="Bold" HeightRequest="58" CornerRadius="16" BackgroundColor="{StaticResource Primary}" TextColor="White" Clicked="StartButton_Clicked"/>
+  <Button Text="■ إيقاف التذكير" FontSize="17" HeightRequest="54" CornerRadius="16" BackgroundColor="#E2E8F0" TextColor="#334155" Clicked="StopButton_Clicked"/>
+  <Label Text="يتطلب التنبيه السماح بالإشعارات والتنبيهات الدقيقة في إعدادات الهاتف." FontSize="12" TextColor="{StaticResource SecondaryText}" HorizontalTextAlignment="Center"/>
+ </VerticalStackLayout></ScrollView>
+</ContentPage>
