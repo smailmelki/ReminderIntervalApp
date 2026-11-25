@@ -12,4 +12,7 @@
     <ApplicationVersion>1</ApplicationVersion>
     <AndroidMinSdkVersion>26</AndroidMinSdkVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.110" />
+  </ItemGroup>
 </Project>
